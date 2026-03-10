@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>niche princess</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -16,7 +19,7 @@
       width: 100%;
       overflow: hidden;
       background-color: #000;
-      font-family: Arial, sans-serif;
+      font-family: "MonteCarlo", cursive;
       color: #fff;
     }
 
@@ -26,12 +29,11 @@
       align-items: center;
       justify-content: space-between;
       padding: 3vh 4vw;
-      text-transform: lowercase;
     }
 
     /* LOGO */
     .logo {
-      width: clamp(120px, 30vw, 280px);
+      width: clamp(70px, 15vw, 160px);
       flex-shrink: 0;
     }
 
@@ -44,7 +46,7 @@
     .cd-case {
       flex-shrink: 1;
       min-height: 0;
-      width: clamp(200px, 70vw, 600px);
+      width: clamp(200px, 88vw, 720px);
     }
 
     .cd-case img {
@@ -52,7 +54,7 @@
       height: 100%;
       object-fit: contain;
       display: block;
-      max-height: 45vh;
+      max-height: 58vh;
     }
 
     /* NOW PLAYING + PLAYER GROUP */
@@ -66,7 +68,7 @@
 
     /* NOW PLAYING */
     .now-playing {
-      font-size: clamp(11px, 2vw, 14px);
+      font-size: clamp(16px, 3vw, 22px);
       color: #fff;
       letter-spacing: 0.3px;
       text-align: center;
@@ -113,7 +115,7 @@
     }
 
     .time {
-      font-size: clamp(11px, 2vw, 13px);
+      font-size: clamp(15px, 2.5vw, 18px);
       color: #e00;
       white-space: nowrap;
       min-width: 36px;
@@ -138,6 +140,37 @@
       border-radius: 50%;
     }
 
+    /* VOLUME SLIDER */
+    .volume-slider {
+      flex-shrink: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 80px;
+      height: 2px;
+      background: #e00;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e00;
+      cursor: pointer;
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e00;
+      cursor: pointer;
+      border: none;
+    }
+
     /* LOADING OVERLAY */
     #loading-overlay {
       position: fixed;
@@ -158,7 +191,7 @@
     }
 
     #loading-label {
-      font-size: 13px;
+      font-size: 16px;
       color: #888;
       letter-spacing: 1px;
     }
@@ -200,7 +233,7 @@
 
     /* FOOTER */
     footer {
-      font-size: clamp(10px, 1.5vw, 12px);
+      font-size: clamp(14px, 2vw, 17px);
       color: #888;
       flex-shrink: 0;
     }
@@ -228,6 +261,7 @@
         <div class="thumb"></div>
       </div>
       <span class="time">--:--</span>
+      <input class="volume-slider" id="volume-slider" type="range" min="0" max="1" step="0.01" value="1">
     </div>
   </div>
 
@@ -235,7 +269,7 @@
   <a href="https://wehate.life" target="_blank" rel="noopener noreferrer"><button class="merch-btn">buy merch</button></a>
 
   <!-- FOOTER -->
-  <footer>all rights reserved</footer>
+  <footer>© 2026 Anarchist Sanctuary. All rights reserved.</footer>
 
   <!-- LOADING OVERLAY -->
   <div id="loading-overlay">
@@ -391,6 +425,12 @@
       const rect = progressBar.getBoundingClientRect();
       const pct = (e.clientX - rect.left) / rect.width;
       audio.currentTime = pct * audio.duration;
+    });
+
+    // volume slider
+    const volumeSlider = document.getElementById('volume-slider');
+    volumeSlider.addEventListener('input', () => {
+      audio.volume = volumeSlider.value;
     });
   </script>
 
