@@ -104,6 +104,14 @@
       margin-left: 3px;
     }
 
+    .play-btn.paused::after {
+      border: none;
+      width: 13px;
+      height: 14px;
+      background: linear-gradient(to right, #e00 40%, transparent 40%, transparent 60%, #e00 60%);
+      margin-left: 0;
+    }
+
     .time {
       font-size: clamp(11px, 2vw, 13px);
       color: #e00;
@@ -122,12 +130,56 @@
     .progress-bar .thumb {
       position: absolute;
       top: 50%;
-      left: 30%;
+      left: 0%;
       transform: translate(-50%, -50%);
       width: 8px;
       height: 8px;
       background-color: #e00;
       border-radius: 50%;
+    }
+
+    /* LOADING OVERLAY */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 100;
+      transition: opacity 0.6s ease;
+    }
+
+    #loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #loading-label {
+      font-size: 13px;
+      color: #888;
+      letter-spacing: 1px;
+    }
+
+    #loading-bar-track {
+      width: clamp(200px, 60vw, 500px);
+      height: 2px;
+      background: #222;
+      position: relative;
+    }
+
+    #loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #e00;
+      transition: width 0.3s ease;
+    }
+
+    #loading-pct {
+      font-size: 12px;
+      color: #e00;
     }
 
     /* BUY MERCH */
@@ -168,14 +220,14 @@
 
   <!-- NOW PLAYING + PLAYER -->
   <div class="player-group">
-    <p class="now-playing">Now Playing: i know ur getting sick of me</p>
+    <p class="now-playing"></p>
     <div class="player">
       <button class="play-btn" aria-label="Play"></button>
-      <span class="time">13:10</span>
+      <span class="time">0:00</span>
       <div class="progress-bar">
         <div class="thumb"></div>
       </div>
-      <span class="time">1:11.24</span>
+      <span class="time">--:--</span>
     </div>
   </div>
 
@@ -185,30 +237,160 @@
   <!-- FOOTER -->
   <footer>all rights reserved</footer>
 
-  <audio id="audio" src="audio.mp3"></audio>
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay">
+    <span id="loading-label">loading...</span>
+    <div id="loading-bar-track">
+      <div id="loading-bar-fill"></div>
+    </div>
+    <span id="loading-pct">0%</span>
+  </div>
+
+  <audio id="audio" src="audio.mp3" preload="auto"></audio>
 
   <script>
     // ─── TRACKLIST ───────────────────────────────────────────────
     // Add each track with its start time in seconds.
     // Example: { time: 90, title: "track name" } starts at 1:30
     const tracks = [
-      { time: 0,   title: "track 1" },
-      { time: 60,  title: "track 2" },
-      { time: 120, title: "track 3" },
+      { time: 0,    title: "dance for me" },
+      { time: 197,  title: "bad bad bad" },
+      { time: 233,  title: "bad bad bad (feat. lytra)" },
+      { time: 304,  title: "make you sweat" },
+      { time: 465,  title: "keep a secret" },
+      { time: 627,  title: "obsessed with you" },
+      { time: 733,  title: "whatever it takes" },
+      { time: 894,  title: "withdrawals (2026 remaster)" },
+      { time: 954,  title: "comfort zone" },
+      { time: 1031, title: "i'm back on the drugs" },
+      { time: 1198, title: "one more line?" },
+      { time: 1346, title: "make us one last line" },
+      { time: 1493, title: "this is the last line because i ran out" },
+      { time: 1621, title: "my broken record" },
+      { time: 1824, title: "i know ur getting sick of me" },
+      { time: 1920, title: "i just hope you tell me when you change your mind" },
+      { time: 2112, title: "running out of time" },
+      { time: 2197, title: "sippin soju" },
+      { time: 2328, title: "sippin soju (feat. hoso)" },
+      { time: 2396, title: "advertisement" },
+      { time: 2417, title: "how could i be so stupid - interlude" },
+      { time: 2484, title: "life update: she changed her mind" },
+      { time: 2627, title: "guess i'm just invisible to you" },
+      { time: 2682, title: "guess i'm just invisible to you (feat. i wanna be a jack-o-lantern)" },
+      { time: 2760, title: "the only one you love" },
+      { time: 2800, title: "the only one you love - full version" },
+      { time: 2902, title: "everyday is the same in nz" },
+      { time: 2994, title: "sobbing at the strip club" },
+      { time: 3174, title: "bleeding out" },
+      { time: 3233, title: "one way ticket - interlude" },
+      { time: 3343, title: "look who's back" },
+      { time: 3421, title: "possessed" },
+      { time: 3570, title: "hahaha happy halloween bro" },
+      { time: 3645, title: "i'm not that stupid anymore" },
+      { time: 3730, title: "i'll stay sober (tfw ur a drug addict - original version)" },
+      { time: 3908, title: "all we need is us" },
+      { time: 3962, title: "all we need is us (feat. kets4eki)" },
+      { time: 4003, title: "hatefuck" },
+      { time: 4120, title: "finale: guillotine" },
+      { time: 4313, title: null }, // end of album
     ];
     // ─────────────────────────────────────────────────────────────
 
-    const audio = document.getElementById('audio');
-    const nowPlaying = document.querySelector('.now-playing');
+    const audio       = document.getElementById('audio');
+    const nowPlaying  = document.querySelector('.now-playing');
+    const playBtn     = document.querySelector('.play-btn');
+    const thumb       = document.querySelector('.thumb');
+    const progressBar = document.querySelector('.progress-bar');
+    const timeEls     = document.querySelectorAll('.time');
+    const overlay     = document.getElementById('loading-overlay');
+    const barFill     = document.getElementById('loading-bar-fill');
+    const loadingPct  = document.getElementById('loading-pct');
 
-    audio.addEventListener('timeupdate', () => {
-      const current = audio.currentTime;
+    // loading progress via buffered ranges
+    audio.addEventListener('progress', () => {
+      if (!audio.duration || !audio.buffered.length) return;
+      const pct = Math.min(100, (audio.buffered.end(audio.buffered.length - 1) / audio.duration) * 100);
+      barFill.style.width = pct + '%';
+      loadingPct.textContent = Math.floor(pct) + '%';
+    });
+
+    audio.addEventListener('canplay', () => {
+      barFill.style.width = '100%';
+      loadingPct.textContent = '100%';
+      setTimeout(() => overlay.classList.add('hidden'), 400);
+    });
+
+    // helpers
+    function formatTime(s) {
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = Math.floor(s % 60);
+      return h > 0
+        ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+        : `${m}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function getActiveTrack(current) {
       let active = tracks[0];
       for (const track of tracks) {
         if (current >= track.time) active = track;
         else break;
       }
-      nowPlaying.textContent = 'Now Playing: ' + active.title;
+      return active;
+    }
+
+    function updateNowPlaying(current) {
+      if (!hasStarted) return;
+      const active = getActiveTrack(current);
+      nowPlaying.textContent = active.title ? 'now playing: ' + active.title : '';
+    }
+
+    let hasStarted = false;
+
+    // play / pause
+    playBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('play', () => {
+      hasStarted = true;
+      playBtn.classList.add('paused');
+    });
+    audio.addEventListener('pause', () => playBtn.classList.remove('paused'));
+
+    // on end: reset text + button
+    audio.addEventListener('ended', () => {
+      playBtn.classList.remove('paused');
+      nowPlaying.textContent = '';
+      thumb.style.left = '0%';
+      timeEls[0].textContent = '0:00';
+    });
+
+    // progress bar: update on timeupdate (covers playback + seeking)
+    audio.addEventListener('timeupdate', () => {
+      const current = audio.currentTime;
+      const duration = audio.duration || 0;
+      const pct = duration ? (current / duration) * 100 : 0;
+      thumb.style.left = pct + '%';
+      timeEls[0].textContent = formatTime(current);
+      updateNowPlaying(current);
+    });
+
+    // show duration once loaded
+    audio.addEventListener('loadedmetadata', () => {
+      timeEls[1].textContent = formatTime(audio.duration);
+    });
+
+    // click to seek
+    progressBar.addEventListener('click', (e) => {
+      if (!audio.duration) return;
+      const rect = progressBar.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
     });
   </script>
 
