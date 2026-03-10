@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>niche princess</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3vh 4vw;
+      text-transform: lowercase;
+    }
+
+    /* LOGO */
+    .logo {
+      width: clamp(120px, 30vw, 280px);
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      width: 100%;
+      display: block;
+    }
+
+    /* CD CASE */
+    .cd-case {
+      flex-shrink: 1;
+      min-height: 0;
+      width: clamp(200px, 70vw, 600px);
+    }
+
+    .cd-case img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      max-height: 45vh;
+    }
+
+    /* NOW PLAYING + PLAYER GROUP */
+    .player-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* NOW PLAYING */
+    .now-playing {
+      font-size: clamp(11px, 2vw, 14px);
+      color: #fff;
+      letter-spacing: 0.3px;
+      text-align: center;
+    }
+
+    /* AUDIO PLAYER */
+    .player {
+      width: clamp(200px, 70vw, 600px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .play-btn {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border: 2px solid #e00;
+      border-radius: 50%;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .play-btn::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 13px solid #e00;
+      margin-left: 3px;
+    }
+
+    .time {
+      font-size: clamp(11px, 2vw, 13px);
+      color: #e00;
+      white-space: nowrap;
+      min-width: 36px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 2px;
+      background-color: #e00;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .progress-bar .thumb {
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background-color: #e00;
+      border-radius: 50%;
+    }
+
+    /* BUY MERCH */
+    .merch-btn {
+      padding: clamp(8px, 1.5vh, 12px) clamp(20px, 5vw, 36px);
+      background: none;
+      border: 2px solid #e00;
+      color: #fff;
+      font-size: clamp(12px, 2vw, 15px);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .merch-btn:hover {
+      background-color: #e00;
+    }
+
+    /* FOOTER */
+    footer {
+      font-size: clamp(10px, 1.5vw, 12px);
+      color: #888;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <img src="logo.png" alt="Niche Princess">
+  </div>
+
+  <!-- CD CASE -->
+  <div class="cd-case">
+    <img src="art.png" alt="Album Art">
+  </div>
+
+  <!-- NOW PLAYING + PLAYER -->
+  <div class="player-group">
+    <p class="now-playing">Now Playing: i know ur getting sick of me</p>
+    <div class="player">
+      <button class="play-btn" aria-label="Play"></button>
+      <span class="time">13:10</span>
+      <div class="progress-bar">
+        <div class="thumb"></div>
+      </div>
+      <span class="time">1:11.24</span>
+    </div>
+  </div>
+
+  <!-- BUY MERCH -->
+  <a href="https://wehate.life" target="_blank" rel="noopener noreferrer"><button class="merch-btn">buy merch</button></a>
+
+  <!-- FOOTER -->
+  <footer>all rights reserved</footer>
+
+  <audio id="audio" src="audio.mp3"></audio>
+
+  <script>
+    // ─── TRACKLIST ───────────────────────────────────────────────
+    // Add each track with its start time in seconds.
+    // Example: { time: 90, title: "track name" } starts at 1:30
+    const tracks = [
+      { time: 0,   title: "track 1" },
+      { time: 60,  title: "track 2" },
+      { time: 120, title: "track 3" },
+    ];
+    // ─────────────────────────────────────────────────────────────
+
+    const audio = document.getElementById('audio');
+    const nowPlaying = document.querySelector('.now-playing');
+
+    audio.addEventListener('timeupdate', () => {
+      const current = audio.currentTime;
+      let active = tracks[0];
+      for (const track of tracks) {
+        if (current >= track.time) active = track;
+        else break;
+      }
+      nowPlaying.textContent = 'Now Playing: ' + active.title;
+    });
+  </script>
+
+</body>
+</html>
