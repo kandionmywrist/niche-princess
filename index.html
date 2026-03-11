@@ -340,7 +340,7 @@
     <span id="loading-pct">0%</span>
   </div>
 
-  <audio id="audio" src="audio.mp3" preload="auto"></audio>
+  <audio id="audio" preload="none"></audio>
 
   <script>
     // ─── TRACKLIST ────────────────────────────────────────────────
@@ -399,25 +399,18 @@
     const loadingPct  = document.getElementById('loading-pct');
 
     // ─── LOADING ──────────────────────────────────────────────────
-    function dismissOverlay() {
-      barFill.style.width = '100%';
-      loadingPct.textContent = '100%';
-      setTimeout(() => overlay.classList.add('hidden'), 400);
-    }
+    // Dismiss overlay immediately — audio loads on demand when play is pressed
+    window.addEventListener('load', () => {
+      setTimeout(() => overlay.classList.add('hidden'), 300);
+    });
 
+    // Buffer progress once audio is loading
     audio.addEventListener('progress', () => {
       if (!audio.duration || !audio.buffered.length) return;
       const pct = Math.min(100, (audio.buffered.end(audio.buffered.length - 1) / audio.duration) * 100);
       barFill.style.width = pct + '%';
       loadingPct.textContent = Math.floor(pct) + '%';
     });
-
-    audio.addEventListener('canplay', dismissOverlay);
-
-    // Mobile browsers don't preload audio — dismiss overlay on first tap
-    playBtn.addEventListener('click', () => {
-      if (!overlay.classList.contains('hidden')) dismissOverlay();
-    }, { once: true });
 
     // ─── HELPERS ──────────────────────────────────────────────────
     function formatTime(s) {
@@ -447,7 +440,16 @@
     let hasStarted = false;
 
     // ─── PLAY / PAUSE ─────────────────────────────────────────────
+    let audioLoaded = false;
+
     playBtn.addEventListener('click', () => {
+      if (!audioLoaded) {
+        audioLoaded = true;
+        audio.src = 'audio.mp3';
+        audio.load();
+        audio.addEventListener('canplay', () => audio.play(), { once: true });
+        return;
+      }
       if (audio.paused) {
         audio.play();
       } else {
