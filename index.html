@@ -462,7 +462,11 @@
       }
     });
 
-    const artworkURL = 'https://cdn.jsdelivr.net/gh/kandionmywrist/niche-princess@main/player.jpeg';
+    const artworkURL = 'https://cdn.jsdelivr.net/gh/kandionmywrist/niche-princess@main/player.png';
+
+    // Preload artwork so iOS has it cached before the lock screen requests it
+    const _artworkPreload = new Image();
+    _artworkPreload.src = artworkURL;
 
     function updateMediaSession(title) {
       if ('mediaSession' in navigator) {
@@ -471,7 +475,7 @@
           artist: 'niche princess',
           album: 'niche princess',
           artwork: [
-            { src: artworkURL, sizes: '512x512', type: 'image/jpeg' }
+            { src: artworkURL, sizes: '512x512', type: 'image/png' }
           ]
         });
       }
