@@ -462,6 +462,8 @@
       }
     });
 
+    const artworkURL = 'https://raw.githubusercontent.com/kandionmywrist/niche-princess/refs/heads/main/player.jpeg';
+
     function updateMediaSession(title) {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
@@ -469,7 +471,7 @@
           artist: 'niche princess',
           album: 'niche princess',
           artwork: [
-            { src: 'player.jpeg', sizes: '512x512', type: 'image/jpeg' }
+            { src: artworkURL, sizes: '512x512', type: 'image/jpeg' }
           ]
         });
       }
