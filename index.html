@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>niche princess</title>
-  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="icon" type="image/png" href="art.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
@@ -431,10 +431,15 @@
       return active;
     }
 
+    let lastTitle = null;
     function updateNowPlaying(current) {
       if (!hasStarted) return;
       const active = getActiveTrack(current);
       nowPlaying.textContent = active.title ? 'Now Playing: ' + active.title : '';
+      if (active.title !== lastTitle) {
+        lastTitle = active.title;
+        updateMediaSession(active.title);
+      }
     }
 
     let hasStarted = false;
@@ -457,9 +462,23 @@
       }
     });
 
+    function updateMediaSession(title) {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: title || 'niche princess',
+          artist: 'niche princess',
+          album: 'niche princess',
+          artwork: [
+            { src: 'art.png', sizes: '512x512', type: 'image/png' }
+          ]
+        });
+      }
+    }
+
     audio.addEventListener('play', () => {
       hasStarted = true;
       playBtn.classList.add('paused');
+      updateMediaSession(getActiveTrack(audio.currentTime).title);
     });
     audio.addEventListener('pause', () => playBtn.classList.remove('paused'));
 
