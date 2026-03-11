@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>niche princess</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
@@ -16,6 +17,7 @@
 
     html, body {
       height: 100%;
+      height: 100dvh;
       width: 100%;
       overflow: hidden;
       background-color: #000;
@@ -29,6 +31,22 @@
       align-items: center;
       justify-content: space-between;
       padding: 3vh 4vw;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* SPARKLES CANVAS */
+    #sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* everything above canvas */
+    .logo, .cd-case, .player-group, .merch-btn, footer, a {
+      position: relative;
+      z-index: 1;
     }
 
     /* LOGO */
@@ -76,10 +94,16 @@
 
     /* AUDIO PLAYER */
     .player {
-      width: clamp(200px, 70vw, 600px);
+      width: clamp(200px, 88vw, 600px);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .volume-section {
+        display: none;
+      }
     }
 
     .play-btn {
@@ -114,13 +138,16 @@
       margin-left: 0;
     }
 
+    /* TIMESTAMPS — normal font */
     .time {
-      font-size: clamp(15px, 2.5vw, 18px);
+      font-family: sans-serif;
+      font-size: clamp(11px, 2vw, 14px);
       color: #e00;
       white-space: nowrap;
       min-width: 36px;
     }
 
+    /* PROGRESS BAR */
     .progress-bar {
       flex: 1;
       height: 2px;
@@ -134,18 +161,36 @@
       top: 50%;
       left: 0%;
       transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       background-color: #e00;
       border-radius: 50%;
+      transition: transform 0.1s;
     }
 
-    /* VOLUME SLIDER */
-    .volume-slider {
+    .progress-bar:hover .thumb {
+      transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    /* VOLUME SECTION */
+    .volume-section {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       flex-shrink: 0;
+    }
+
+    .volume-icon {
+      width: 16px;
+      height: 16px;
+      fill: #e00;
+      flex-shrink: 0;
+    }
+
+    .volume-slider {
       -webkit-appearance: none;
       appearance: none;
-      width: 80px;
+      width: 70px;
       height: 2px;
       background: #e00;
       outline: none;
@@ -191,7 +236,8 @@
     }
 
     #loading-label {
-      font-size: 16px;
+      font-family: sans-serif;
+      font-size: 14px;
       color: #888;
       letter-spacing: 1px;
     }
@@ -211,6 +257,7 @@
     }
 
     #loading-pct {
+      font-family: sans-serif;
       font-size: 12px;
       color: #e00;
     }
@@ -221,7 +268,8 @@
       background: none;
       border: 2px solid #e00;
       color: #fff;
-      font-size: clamp(12px, 2vw, 15px);
+      font-family: sans-serif;
+      font-size: clamp(14px, 2.5vw, 18px);
       cursor: pointer;
       letter-spacing: 0.5px;
       flex-shrink: 0;
@@ -233,13 +281,17 @@
 
     /* FOOTER */
     footer {
-      font-size: clamp(14px, 2vw, 17px);
+      font-family: sans-serif;
+      font-size: clamp(10px, 1.6vw, 13px);
       color: #888;
       flex-shrink: 0;
     }
   </style>
 </head>
 <body>
+
+  <!-- SPARKLES -->
+  <canvas id="sparkles"></canvas>
 
   <!-- LOGO -->
   <div class="logo">
@@ -261,12 +313,20 @@
         <div class="thumb"></div>
       </div>
       <span class="time">--:--</span>
-      <input class="volume-slider" id="volume-slider" type="range" min="0" max="1" step="0.01" value="1">
+      <div class="volume-section">
+        <!-- volume icon SVG -->
+        <svg class="volume-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <input class="volume-slider" id="volume-slider" type="range" min="0" max="1" step="0.01" value="1">
+      </div>
     </div>
   </div>
 
   <!-- BUY MERCH -->
-  <a href="https://wehate.life" target="_blank" rel="noopener noreferrer"><button class="merch-btn">buy merch</button></a>
+  <a href="https://wehate.life" target="_blank" rel="noopener noreferrer">
+    <button class="merch-btn">Shop Exclusive Album Merch</button>
+  </a>
 
   <!-- FOOTER -->
   <footer>© 2026 Anarchist Sanctuary. All rights reserved.</footer>
@@ -283,49 +343,47 @@
   <audio id="audio" src="audio.mp3" preload="auto"></audio>
 
   <script>
-    // ─── TRACKLIST ───────────────────────────────────────────────
-    // Add each track with its start time in seconds.
-    // Example: { time: 90, title: "track name" } starts at 1:30
+    // ─── TRACKLIST ────────────────────────────────────────────────
     const tracks = [
-      { time: 0,    title: "dance for me" },
-      { time: 197,  title: "bad bad bad" },
-      { time: 233,  title: "bad bad bad (feat. lytra)" },
-      { time: 304,  title: "make you sweat" },
-      { time: 465,  title: "keep a secret" },
-      { time: 627,  title: "obsessed with you" },
-      { time: 733,  title: "whatever it takes" },
-      { time: 894,  title: "withdrawals (2026 remaster)" },
-      { time: 954,  title: "comfort zone" },
-      { time: 1031, title: "i'm back on the drugs" },
-      { time: 1198, title: "one more line?" },
-      { time: 1346, title: "make us one last line" },
-      { time: 1493, title: "this is the last line because i ran out" },
-      { time: 1621, title: "my broken record" },
-      { time: 1824, title: "i know ur getting sick of me" },
-      { time: 1920, title: "i just hope you tell me when you change your mind" },
-      { time: 2112, title: "running out of time" },
-      { time: 2197, title: "sippin soju" },
-      { time: 2328, title: "sippin soju (feat. hoso)" },
-      { time: 2396, title: "advertisement" },
-      { time: 2417, title: "how could i be so stupid - interlude" },
-      { time: 2484, title: "life update: she changed her mind" },
-      { time: 2627, title: "guess i'm just invisible to you" },
-      { time: 2682, title: "guess i'm just invisible to you (feat. i wanna be a jack-o-lantern)" },
-      { time: 2760, title: "the only one you love" },
-      { time: 2800, title: "the only one you love - full version" },
-      { time: 2902, title: "everyday is the same in nz" },
-      { time: 2994, title: "sobbing at the strip club" },
-      { time: 3174, title: "bleeding out" },
-      { time: 3233, title: "one way ticket - interlude" },
-      { time: 3343, title: "look who's back" },
-      { time: 3421, title: "possessed" },
-      { time: 3570, title: "hahaha happy halloween bro" },
-      { time: 3645, title: "i'm not that stupid anymore" },
-      { time: 3730, title: "i'll stay sober (tfw ur a drug addict - original version)" },
-      { time: 3908, title: "all we need is us" },
-      { time: 3962, title: "all we need is us (feat. kets4eki)" },
-      { time: 4003, title: "hatefuck" },
-      { time: 4120, title: "finale: guillotine" },
+      { time: 0,    title: "Dance for Me" },
+      { time: 197,  title: "Bad Bad Bad" },
+      { time: 233,  title: "Bad Bad Bad (feat. Lytra)" },
+      { time: 304,  title: "Make You Sweat" },
+      { time: 465,  title: "Keep a Secret" },
+      { time: 627,  title: "Obsessed with You" },
+      { time: 733,  title: "Whatever It Takes" },
+      { time: 894,  title: "Withdrawals (2026 Remaster)" },
+      { time: 954,  title: "Comfort Zone" },
+      { time: 1031, title: "I'm Back on the Drugs" },
+      { time: 1198, title: "One More Line?" },
+      { time: 1346, title: "Make Us One Last Line" },
+      { time: 1493, title: "This Is the Last Line Because I Ran Out" },
+      { time: 1621, title: "My Broken Record" },
+      { time: 1824, title: "I Know Ur Getting Sick of Me" },
+      { time: 1920, title: "I Just Hope You Tell Me When You Change Your Mind" },
+      { time: 2112, title: "Running Out of Time" },
+      { time: 2197, title: "Sippin Soju" },
+      { time: 2328, title: "Sippin Soju (feat. Hoso)" },
+      { time: 2396, title: "Advertisement" },
+      { time: 2417, title: "How Could I Be So Stupid - Interlude" },
+      { time: 2484, title: "Life Update: She Changed Her Mind" },
+      { time: 2627, title: "Guess I'm Just Invisible to You" },
+      { time: 2682, title: "Guess I'm Just Invisible to You (feat. I Wanna Be a Jack-O-Lantern)" },
+      { time: 2760, title: "The Only One You Love" },
+      { time: 2800, title: "The Only One You Love - Full Version" },
+      { time: 2902, title: "Everyday Is the Same in NZ" },
+      { time: 2994, title: "Sobbing at the Strip Club" },
+      { time: 3174, title: "Bleeding Out" },
+      { time: 3233, title: "One Way Ticket - Interlude" },
+      { time: 3343, title: "Look Who's Back" },
+      { time: 3421, title: "Possessed" },
+      { time: 3570, title: "Hahaha Happy Halloween Bro" },
+      { time: 3645, title: "I'm Not That Stupid Anymore" },
+      { time: 3730, title: "I'll Stay Sober (Tfw Ur a Drug Addict - Original Version)" },
+      { time: 3908, title: "All We Need Is Us" },
+      { time: 3962, title: "All We Need Is Us (feat. kets4eki)" },
+      { time: 4003, title: "Hatefuck" },
+      { time: 4120, title: "Finale: Guillotine" },
       { time: 4313, title: null }, // end of album
     ];
     // ─────────────────────────────────────────────────────────────
@@ -340,7 +398,13 @@
     const barFill     = document.getElementById('loading-bar-fill');
     const loadingPct  = document.getElementById('loading-pct');
 
-    // loading progress via buffered ranges
+    // ─── LOADING ──────────────────────────────────────────────────
+    function dismissOverlay() {
+      barFill.style.width = '100%';
+      loadingPct.textContent = '100%';
+      setTimeout(() => overlay.classList.add('hidden'), 400);
+    }
+
     audio.addEventListener('progress', () => {
       if (!audio.duration || !audio.buffered.length) return;
       const pct = Math.min(100, (audio.buffered.end(audio.buffered.length - 1) / audio.duration) * 100);
@@ -348,13 +412,14 @@
       loadingPct.textContent = Math.floor(pct) + '%';
     });
 
-    audio.addEventListener('canplay', () => {
-      barFill.style.width = '100%';
-      loadingPct.textContent = '100%';
-      setTimeout(() => overlay.classList.add('hidden'), 400);
-    });
+    audio.addEventListener('canplay', dismissOverlay);
 
-    // helpers
+    // Mobile browsers don't preload audio — dismiss overlay on first tap
+    playBtn.addEventListener('click', () => {
+      if (!overlay.classList.contains('hidden')) dismissOverlay();
+    }, { once: true });
+
+    // ─── HELPERS ──────────────────────────────────────────────────
     function formatTime(s) {
       const h = Math.floor(s / 3600);
       const m = Math.floor((s % 3600) / 60);
@@ -376,12 +441,12 @@
     function updateNowPlaying(current) {
       if (!hasStarted) return;
       const active = getActiveTrack(current);
-      nowPlaying.textContent = active.title ? 'now playing: ' + active.title : '';
+      nowPlaying.textContent = active.title ? 'Now Playing: ' + active.title : '';
     }
 
     let hasStarted = false;
 
-    // play / pause
+    // ─── PLAY / PAUSE ─────────────────────────────────────────────
     playBtn.addEventListener('click', () => {
       if (audio.paused) {
         audio.play();
@@ -396,7 +461,6 @@
     });
     audio.addEventListener('pause', () => playBtn.classList.remove('paused'));
 
-    // on end: reset text + button
     audio.addEventListener('ended', () => {
       playBtn.classList.remove('paused');
       nowPlaying.textContent = '';
@@ -404,8 +468,9 @@
       timeEls[0].textContent = '0:00';
     });
 
-    // progress bar: update on timeupdate (covers playback + seeking)
+    // ─── PROGRESS BAR ─────────────────────────────────────────────
     audio.addEventListener('timeupdate', () => {
+      if (isScrubbing) return;
       const current = audio.currentTime;
       const duration = audio.duration || 0;
       const pct = duration ? (current / duration) * 100 : 0;
@@ -414,24 +479,122 @@
       updateNowPlaying(current);
     });
 
-    // show duration once loaded
     audio.addEventListener('loadedmetadata', () => {
       timeEls[1].textContent = formatTime(audio.duration);
     });
 
-    // click to seek
-    progressBar.addEventListener('click', (e) => {
-      if (!audio.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pct * audio.duration;
-    });
+    // ─── SCRUBBING (drag support) ──────────────────────────────────
+    let isScrubbing = false;
+    let wasPlaying  = false;
 
-    // volume slider
+    function getPct(e) {
+      const rect = progressBar.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    }
+
+    function startScrub(e) {
+      if (!audio.duration) return;
+      isScrubbing = true;
+      wasPlaying = !audio.paused;
+      if (wasPlaying) audio.pause();
+      moveScrub(e);
+    }
+
+    function moveScrub(e) {
+      if (!isScrubbing) return;
+      e.preventDefault();
+      const pct = getPct(e);
+      thumb.style.left = (pct * 100) + '%';
+      timeEls[0].textContent = formatTime(pct * audio.duration);
+      updateNowPlaying(pct * audio.duration);
+    }
+
+    function endScrub(e) {
+      if (!isScrubbing) return;
+      isScrubbing = false;
+      const pct = getPct(e.changedTouches ? { clientX: e.changedTouches[0].clientX } : e);
+      audio.currentTime = pct * audio.duration;
+      if (wasPlaying) audio.play();
+    }
+
+    progressBar.addEventListener('mousedown',  startScrub);
+    progressBar.addEventListener('touchstart', startScrub, { passive: false });
+    document.addEventListener('mousemove',     moveScrub);
+    document.addEventListener('touchmove',     moveScrub, { passive: false });
+    document.addEventListener('mouseup',       endScrub);
+    document.addEventListener('touchend',      endScrub);
+
+    // ─── VOLUME ───────────────────────────────────────────────────
     const volumeSlider = document.getElementById('volume-slider');
     volumeSlider.addEventListener('input', () => {
       audio.volume = volumeSlider.value;
     });
+
+    // ─── SPARKLES ─────────────────────────────────────────────────
+    const canvas = document.getElementById('sparkles');
+    const ctx    = canvas.getContext('2d');
+    let sparkles = [];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+    function spawnSparkle() {
+      sparkles.push({
+        x:     randomBetween(0, canvas.width),
+        y:     randomBetween(canvas.height * 0.1, canvas.height),
+        size:  randomBetween(1.5, 3.5),
+        alpha: randomBetween(0.3, 0.7),
+        vy:    randomBetween(-0.4, -1.0),
+        vx:    randomBetween(-0.3, 0.3),
+        life:  0,
+        maxLife: randomBetween(80, 180),
+      });
+    }
+
+    let frame = 0;
+    function animateSparkles() {
+      requestAnimationFrame(animateSparkles);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      frame++;
+      if (frame % 6 === 0) spawnSparkle();
+
+      sparkles = sparkles.filter(s => s.life < s.maxLife);
+
+      for (const s of sparkles) {
+        s.life++;
+        s.x += s.vx;
+        s.y += s.vy;
+        const progress = s.life / s.maxLife;
+        const a = s.alpha * Math.sin(Math.PI * progress); // fade in + out
+
+        // draw a small 4-point star
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.globalAlpha = a;
+        ctx.fillStyle = '#cc0000';
+        ctx.beginPath();
+        const r = s.size;
+        for (let i = 0; i < 8; i++) {
+          const angle = (i * Math.PI) / 4;
+          const radius = i % 2 === 0 ? r : r * 0.4;
+          if (i === 0) ctx.moveTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+          else ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    animateSparkles();
   </script>
 
 </body>
