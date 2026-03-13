@@ -90,7 +90,7 @@
       height: 100%;
       object-fit: contain;
       display: block;
-      max-height: 58vh;
+      max-height: 54vh;
     }
 
     /* NOW PLAYING + PLAYER GROUP */
@@ -281,23 +281,6 @@
       color: #e00;
     }
 
-    /* BUY MERCH */
-    .merch-btn {
-      padding: clamp(8px, 1.5vh, 12px) clamp(20px, 5vw, 36px);
-      background: none;
-      border: 2px solid #e00;
-      color: #fff;
-      font-family: sans-serif;
-      font-size: clamp(14px, 2.5vw, 18px);
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      flex-shrink: 0;
-    }
-
-    .merch-btn:hover {
-      background-color: #e00;
-    }
-
     /* FOOTER */
     footer {
       font-family: sans-serif;
@@ -330,25 +313,7 @@
     }
 
     /* ── 5. BUTTON SHIMMER ── */
-    .merch-btn, .lyrics-btn {
-      overflow: hidden;
-    }
-    .merch-btn::before, .lyrics-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -120%;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-      transform: skewX(-20deg);
-    }
-    .merch-btn:hover::before, .lyrics-btn:hover::before {
-      left: 160%;
-      transition: left 0.55s ease;
-    }
-
-    .lyrics-btn {
+    .btn {
       padding: clamp(8px, 1.5vh, 12px) clamp(20px, 5vw, 36px);
       background: none;
       border: 2px solid #e00;
@@ -358,9 +323,10 @@
       cursor: pointer;
       letter-spacing: 0.5px;
       flex-shrink: 0;
-      position: relative;
+      overflow: hidden;
     }
-    .lyrics-btn:hover {
+
+    .btn:hover {
       background-color: #e00;
     }
   </style>
@@ -402,11 +368,14 @@
 
   <!-- BUTTONS -->
   <div style="display:flex; flex-direction:column; gap: clamp(8px,1.5vh,14px); align-items:center; justify-content:center;">
-    <a href="https://wehate.life" target="_blank" rel="noopener noreferrer">
-      <button class="merch-btn">shop niche princess t-shirt</button>
+    <a href="https://open.spotify.com/album/2WAmMcX5tmBnzFwqTirbHl" target="_blank" rel="noopener noreferrer">
+      <button class="btn">stream niche princess</button>
     </a>
-    <a href="https://an4rch.tunelink.to/nicheprincess" target="_blank" rel="noopener noreferrer">
-      <button class="lyrics-btn">stream niche princess</button>
+    <a href="https://wehate.life" target="_blank" rel="noopener noreferrer">
+      <button class="btn">shop niche princess t-shirt</button>
+    </a>
+    <a href="https://genius.com/albums/Asteria/Niche-princess" target="_blank" rel="noopener noreferrer">
+      <button class="btn">verified lyrics</button>
     </a>
   </div>
 
@@ -430,45 +399,45 @@
   <script>
     // ─── TRACKLIST ────────────────────────────────────────────────
     const tracks = [
-      { time: 0,    title: "Dance for Me" },
-      { time: 197,  title: "Bad Bad Bad" },
-      { time: 233,  title: "Bad Bad Bad (feat. Lytra)" },
-      { time: 304,  title: "Make You Sweat" },
-      { time: 465,  title: "Keep a Secret" },
-      { time: 627,  title: "Obsessed with You" },
-      { time: 733,  title: "Whatever It Takes" },
-      { time: 894,  title: "Withdrawals (2026 Remaster)" },
-      { time: 954,  title: "Comfort Zone" },
-      { time: 1031, title: "I'm Back on the Drugs" },
-      { time: 1198, title: "One More Line?" },
-      { time: 1346, title: "Make Us One Last Line" },
-      { time: 1493, title: "This Is the Last Line Because I Ran Out" },
-      { time: 1621, title: "My Broken Record" },
-      { time: 1824, title: "I Know Ur Getting Sick of Me" },
-      { time: 1920, title: "I Just Hope You Tell Me When You Change Your Mind" },
-      { time: 2112, title: "Running Out of Time" },
-      { time: 2197, title: "Sippin Soju" },
-      { time: 2328, title: "Sippin Soju (feat. Hoso)" },
-      { time: 2396, title: "Advertisement" },
-      { time: 2417, title: "How Could I Be So Stupid - Interlude" },
-      { time: 2484, title: "Life Update: She Changed Her Mind" },
-      { time: 2627, title: "Guess I'm Just Invisible to You" },
-      { time: 2682, title: "Guess I'm Just Invisible to You (feat. I Wanna Be a Jack-O-Lantern)" },
-      { time: 2760, title: "The Only One You Love" },
-      { time: 2800, title: "The Only One You Love - Full Version" },
-      { time: 2902, title: "Everyday Is the Same in NZ" },
-      { time: 2994, title: "Sobbing at the Strip Club" },
-      { time: 3174, title: "Bleeding Out" },
-      { time: 3233, title: "One Way Ticket - Interlude" },
-      { time: 3343, title: "Look Who's Back" },
-      { time: 3421, title: "Possessed" },
-      { time: 3570, title: "Hahaha Happy Halloween Bro" },
-      { time: 3645, title: "I'm Not That Stupid Anymore" },
-      { time: 3730, title: "I'll Stay Sober (Tfw Ur a Drug Addict - Original Version)" },
-      { time: 3908, title: "All We Need Is Us" },
-      { time: 3962, title: "All We Need Is Us (feat. kets4eki)" },
-      { time: 4003, title: "Hatefuck" },
-      { time: 4120, title: "Finale: Guillotine" },
+      { time: 0,    title: "dance for me" },
+      { time: 197,  title: "bad bad bad" },
+      { time: 233,  title: "bad bad bad (feat. lytra)" },
+      { time: 304,  title: "make you sweat" },
+      { time: 465,  title: "keep a secret" },
+      { time: 627,  title: "obsessed with you" },
+      { time: 733,  title: "whatever it takes" },
+      { time: 894,  title: "withdrawals (2026 remaster)" },
+      { time: 954,  title: "comfort zone" },
+      { time: 1031, title: "i'm back on the drugs" },
+      { time: 1198, title: "one more line?" },
+      { time: 1346, title: "make us one last line" },
+      { time: 1493, title: "this is the last line because i ran out" },
+      { time: 1621, title: "my broken record" },
+      { time: 1824, title: "i know ur getting sick of me" },
+      { time: 1920, title: "i just hope you tell me when you change your mind" },
+      { time: 2112, title: "running out of time" },
+      { time: 2197, title: "sippin soju" },
+      { time: 2328, title: "sippin soju (feat. hoso)" },
+      { time: 2396, title: "advertisement" },
+      { time: 2417, title: "how could i be so stupid - interlude" },
+      { time: 2484, title: "life update: she changed her mind" },
+      { time: 2627, title: "guess i'm just invisible to you" },
+      { time: 2682, title: "guess i'm just invisible to you (feat. i wanna be a jack-o-lantern)" },
+      { time: 2760, title: "the only one you love" },
+      { time: 2800, title: "the only one you love - Full Version" },
+      { time: 2902, title: "everyday is the same in nz" },
+      { time: 2994, title: "sobbing at the strip club" },
+      { time: 3174, title: "bleeding out" },
+      { time: 3233, title: "one way ticket - interlude" },
+      { time: 3343, title: "look who's back" },
+      { time: 3421, title: "possessed" },
+      { time: 3570, title: "hahaha happy halloween bro" },
+      { time: 3645, title: "i'm not that stupid anymore" },
+      { time: 3730, title: "i'll stay sober (tfw ur a drug addict - Original Version)" },
+      { time: 3908, title: "all we need is us" },
+      { time: 3962, title: "all we need is us (feat. kets4eki)" },
+      { time: 4003, title: "hatefuck" },
+      { time: 4120, title: "finale: guillotine" },
       { time: 4313, title: null }, // end of album
     ];
     // ─────────────────────────────────────────────────────────────
